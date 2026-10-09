@@ -6,6 +6,7 @@
 crash.log
 # kubeconfig written by terraform
 *kubeconfig*
+terraform/**/*-config
 
 # Python
 __pycache__/

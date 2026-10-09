@@ -1,4 +1,4 @@
-# BioScale — learn Kubernetes, Terraform & Kafka by building a mock biology pipeline
+# ToyScale — learn Kubernetes, Terraform & Kafka by building a mock biology pipeline
 
 A React dashboard launches "analyses". Each analysis is a 2-step pipeline
 (`align` → `call`), each step runs in its own Kubernetes pod, at most 5 run at
@@ -17,7 +17,7 @@ Prometheus/Grafana watch the cluster.
 | #  | Chapter                              | Notes                              | Status |
 |----|--------------------------------------|------------------------------------|--------|
 | 0  | Tooling                              | [docs/00-tooling.md](docs/00-tooling.md) | ✅ |
-| 1  | Cluster with Terraform (kind)        |                                    |        |
+| 1  | Cluster with Terraform (kind)        | [docs/01-cluster-terraform.md](docs/01-cluster-terraform.md) | ✅ |
 | 2  | First workload by hand               |                                    |        |
 | 3  | The worker container                 |                                    |        |
 | 4  | 2-step pipeline: Jobs + PVC by hand  |                                    |        |
