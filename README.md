@@ -18,6 +18,7 @@ Prometheus/Grafana watch the cluster.
 |----|--------------------------------------|------------------------------------|--------|
 | 0  | Tooling                              | [docs/00-tooling.md](docs/00-tooling.md) | ✅ |
 | 1  | Cluster with Terraform (kind)        | [docs/01-cluster-terraform.md](docs/01-cluster-terraform.md) | ✅ |
+| 1b | Side step: Terraform fundamentals    | [docs/01b-terraform-basics.md](docs/01b-terraform-basics.md) · [playground](playground/terraform-basics/README.md) | ⏳ |
 | 2  | First workload by hand               |                                    |        |
 | 3  | The worker container                 |                                    |        |
 | 4  | 2-step pipeline: Jobs + PVC by hand  |                                    |        |
