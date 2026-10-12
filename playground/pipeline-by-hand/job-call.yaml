@@ -1,0 +1,44 @@
+# Step 2 of analysis demo-1. Identical to job-align.yaml except STEP=call and the names.
+# It must only be created AFTER demo-1-align has succeeded: nothing in Kubernetes
+# itself enforces that order. You do it by hand here; the API will do it in chapter 5.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-1-call
+  namespace: analyses
+  labels:
+    app: toyscale
+    analysis: demo-1
+    step: call
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: toyscale
+        analysis: demo-1
+        step: call
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: worker
+          image: toyscale-worker:0.1.0
+          env:
+            - name: STEP
+              value: call
+            - name: ANALYSIS_ID
+              value: demo-1
+            - name: DATA_DIR
+              value: /data
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests: { cpu: 100m, memory: 64Mi }
+            limits: { memory: 128Mi }
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data-demo-1 # SAME claim as step 1: that's how the output is shared

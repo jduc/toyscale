@@ -1,0 +1,45 @@
+# A Job = "run this pod until it SUCCEEDS (exit code 0), retrying if it fails".
+# Step 1 of analysis demo-1.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-1-align
+  namespace: analyses
+  labels:
+    app: toyscale
+    analysis: demo-1
+    step: align
+spec:
+  backoffLimit: 2                # retry a failed pod up to 2 times, then mark the Job Failed
+  activeDeadlineSeconds: 300     # give up if the whole Job takes longer than 5 min
+  ttlSecondsAfterFinished: 3600  # auto-delete the Job (and its pod) 1h after it finishes
+
+  # The pod template: same shape as a Deployment's template.
+  template:
+    metadata:
+      labels:
+        app: toyscale
+        analysis: demo-1
+        step: align
+    spec:
+      restartPolicy: Never # a failed container isn't restarted in place; the Job makes a NEW pod
+      containers:
+        - name: worker
+          image: toyscale-worker:0.1.0 # the image you `kind load`-ed in chapter 3
+          env:
+            - name: STEP
+              value: align
+            - name: ANALYSIS_ID
+              value: demo-1
+            - name: DATA_DIR
+              value: /data
+          volumeMounts:
+            - name: data       # mount the volume named "data" (below)...
+              mountPath: /data # ...at /data inside the container
+          resources:
+            requests: { cpu: 100m, memory: 64Mi } # what the scheduler reserves on the node
+            limits: { memory: 128Mi }             # above this, the container is killed
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data-demo-1 # the PVC from pvc.yaml

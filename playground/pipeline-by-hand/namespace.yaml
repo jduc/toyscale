@@ -1,0 +1,5 @@
+# The namespace where every analysis will run, now by hand and from chapter 5 by the API.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: analyses

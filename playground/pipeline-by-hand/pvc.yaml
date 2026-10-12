@@ -1,0 +1,18 @@
+# A PersistentVolumeClaim = "I need a disk of this size". One per analysis.
+# It replaces the `-v` folder from chapter 3: both steps mount it at /data.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-demo-1
+  namespace: analyses
+  labels:
+    app: toyscale
+    analysis: demo-1
+spec:
+  # "standard" is kind's default StorageClass: it creates a folder on the node's disk.
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce # mountable read-write by pods on ONE node at a time
+  resources:
+    requests:
+      storage: 100Mi
