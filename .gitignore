@@ -22,3 +22,6 @@ dist/
 
 # Playground outputs
 playground/**/output/
+
+# Local test data written by the worker (docker run -v)
+services/**/data/

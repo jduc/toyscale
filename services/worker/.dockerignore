@@ -1,0 +1,5 @@
+# Files Docker must NOT send into the build (keeps builds fast and images clean)
+__pycache__/
+*.pyc
+.venv/
+data/
