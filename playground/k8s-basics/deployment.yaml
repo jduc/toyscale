@@ -1,0 +1,29 @@
+# A Deployment: "keep 3 pods matching this template running, always".
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: playground
+spec:
+  replicas: 3
+
+  # Which pods belong to me? Those carrying these labels...
+  selector:
+    matchLabels:
+      app: web
+
+  # ...and this is the mould used to create them. Note it is a Pod spec
+  # (compare with pod.yaml) wrapped inside the Deployment.
+  template:
+    metadata:
+      labels:
+        app: web # must match the selector above
+    spec:
+      containers:
+        - name: whoami
+          image: traefik/whoami:v1.11
+          ports:
+            - containerPort: 80
+          env:
+            - name: WHOAMI_NAME # whoami prints this as "Name:"; change it to trigger a rolling update
+              value: "v1"

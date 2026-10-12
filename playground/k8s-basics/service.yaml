@@ -1,0 +1,14 @@
+# A Service: a stable name ("web") and virtual IP that load-balances across
+# every ready pod carrying the label app=web, wherever they run.
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: playground
+spec:
+  type: ClusterIP # reachable only from inside the cluster (the default)
+  selector:
+    app: web
+  ports:
+    - port: 80       # the port the Service listens on
+      targetPort: 80 # the containerPort it forwards to

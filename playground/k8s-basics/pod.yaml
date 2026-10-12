@@ -1,0 +1,15 @@
+# A bare Pod: one container, scheduled on one node, and nobody watching over it.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lonely
+  namespace: playground
+  labels:
+    app: lonely
+spec:
+  containers:
+    - name: whoami
+      # A tiny web server that replies with its own hostname (= the pod name) and IP.
+      image: traefik/whoami:v1.11
+      ports:
+        - containerPort: 80

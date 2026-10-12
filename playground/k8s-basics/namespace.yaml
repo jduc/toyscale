@@ -1,0 +1,5 @@
+# A namespace is a folder for objects. Deleting it deletes everything inside.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: playground
