@@ -3,9 +3,9 @@
 
 CLUSTER    := toyscale
 WORKER_TAG := 0.1.0
-API_TAG    := 0.1.1
+API_TAG    := 0.1.2
 
-.PHONY: build load deploy up logs undeploy
+.PHONY: build load deploy up logs undeploy platform
 
 build: ## build both images
 	docker build -t toyscale-worker:$(WORKER_TAG) services/worker
@@ -27,3 +27,7 @@ logs: ## follow the API logs
 
 undeploy: ## delete everything from k8s/base (both namespaces!)
 	kubectl delete -k k8s/base
+
+platform: ## install the platform (Traefik...) with Terraform stack 02
+	terraform -chdir=terraform/02-platform init -input=false
+	terraform -chdir=terraform/02-platform apply

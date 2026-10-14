@@ -67,10 +67,10 @@ Side effect: once a namespace has a quota on `requests.cpu`/`requests.memory`, *
 declare requests**, or it is refused. Ours do (`resources:` in `job_manifest()`).
 
 ## 4. Health: probes
-The Deployment calls `GET /healthz`:
+The Deployment calls `GET /api/healthz`:
 - **readinessProbe** failing → the pod is removed from the Service (no traffic), but not restarted.
 - **livenessProbe** failing → the container is **restarted**.
-You saw them in chapter 5's logs as `GET /healthz 200` every few seconds.
+You saw them in chapter 5's logs as `GET /api/healthz 200` every few seconds.
 
 ## 5. Why exactly one replica, and `strategy: Recreate`
 The orchestrator keeps its queue **in memory**. With 2 replicas, each pod would have its own queue,
@@ -120,8 +120,8 @@ kubectl exec -n toyscale deploy/api -- ls /var/run/secrets/kubernetes.io/service
 ### Exercise 2: use it
 ```sh
 kubectl port-forward -n toyscale svc/api 8080:80     # terminal A (leave running)
-curl -s -X POST 'localhost:8080/analyses?count=8'    # terminal B
-curl -s localhost:8080/stats
+curl -s -X POST 'localhost:8080/api/analyses?count=8'    # terminal B
+curl -s localhost:8080/api/stats
 ```
 Watch with `k9s -n analyses`. Note: a port-forward is attached to **one pod**; after a redeploy,
 restart it.
@@ -130,7 +130,7 @@ restart it.
 ✍️ In `k8s/base/api-rbac.yaml`, remove `"create"` from the `jobs` verbs. Then:
 ```sh
 kubectl apply -k k8s/base
-curl -s -X POST localhost:8080/analyses
+curl -s -X POST localhost:8080/api/analyses
 make logs                                  # "...: Forbidden, will retry" every second
 ```
 👀 The PVC was created (still allowed), the Job wasn't; the analysis stays `queued`. Put `"create"` back,
@@ -140,8 +140,8 @@ make logs                                  # "...: Forbidden, will retry" every 
 ```sh
 kubectl set env deployment/api -n toyscale MAX_RUNNING=8     # oops, a "bad config" (restarts the pod)
 # restart the port-forward, then:
-curl -s -X POST 'localhost:8080/analyses?count=8'; sleep 10
-curl -s localhost:8080/stats                                   # the app thinks 8 are aligning...
+curl -s -X POST 'localhost:8080/api/analyses?count=8'; sleep 10
+curl -s localhost:8080/api/stats                                   # the app thinks 8 are aligning...
 kubectl get pods -n analyses                                   # ...but only 5 pods exist
 kubectl get events -n analyses --field-selector reason=FailedCreate | head -3   # "exceeded quota"
 kubectl describe resourcequota -n analyses                     # used vs hard

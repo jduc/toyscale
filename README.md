@@ -24,7 +24,7 @@ Prometheus/Grafana watch the cluster.
 | 4  | 2-step pipeline: Jobs + PVC by hand  | [docs/04-pipeline-jobs-pvc.md](docs/04-pipeline-jobs-pvc.md) · [playground](playground/pipeline-by-hand/README.md) | ✅ |
 | 5  | API + orchestrator                   | [docs/05-api-orchestrator.md](docs/05-api-orchestrator.md) | ✅ |
 | 6  | API in-cluster, RBAC, quotas         | [docs/06-api-in-cluster-rbac.md](docs/06-api-in-cluster-rbac.md) | ✅ |
-| 7  | Platform: Traefik, Kafka via Terraform + Helm |                           |        |
+| 7  | Platform: Traefik, Kafka via Terraform + Helm | [docs/07-ingress-traefik.md](docs/07-ingress-traefik.md) | ⏳ |
 | 8  | Event streaming                      |                                    |        |
 | 9  | React dashboard                      |                                    |        |
 | 10 | Monitoring: Prometheus & Grafana     |                                    |        |

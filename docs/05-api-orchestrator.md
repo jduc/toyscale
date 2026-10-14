@@ -88,20 +88,20 @@ k9s -n analyses          # :jobs  :pods  :pvc
 
 **1. One analysis**
 ```sh
-curl -s -X POST localhost:8000/analyses | python3 -m json.tool
-curl -s localhost:8000/analyses | python3 -m json.tool      # repeat: queued → aligning → calling → succeeded
+curl -s -X POST localhost:8000/api/analyses | python3 -m json.tool
+curl -s localhost:8000/api/analyses | python3 -m json.tool      # repeat: queued → aligning → calling → succeeded
 ```
 👀 In terminal 1 the log tells the story: `queued` → `started: created PVC + align Job` →
 `align complete: created call Job` → `succeeded`. In k9s: a PVC, then one pod, then another.
 Final JSON: `align.node` == `call.node`, and `result.input_from` is the align pod.
 
-Also open **http://localhost:8000/docs** in your browser: FastAPI generates an interactive page
+Also open **http://localhost:8000/api/docs** in your browser: FastAPI generates an interactive page
 where you can click "Try it out" on every endpoint.
 
 **2. The max-5 rule**
 ```sh
-curl -s -X POST 'localhost:8000/analyses?count=8' > /dev/null
-while true; do curl -s localhost:8000/stats; echo; sleep 1; done    # ctrl-c to stop
+curl -s -X POST 'localhost:8000/api/analyses?count=8' > /dev/null
+while true; do curl -s localhost:8000/api/stats; echo; sleep 1; done    # ctrl-c to stop
 ```
 👀 `aligning + calling` never exceeds 5; `queued` drains as slots free up. In k9s, never more than 5 running pods.
 
@@ -118,7 +118,7 @@ Submit 3, and while they run, stop the API with ctrl-c. Then:
 ```sh
 kubectl get jobs,pvc -n analyses      # still there! running pods finish their step
 ```
-Restart the API, then `curl -s localhost:8000/analyses` → `[]`. It **forgot everything**: the queue
+Restart the API, then `curl -s localhost:8000/api/analyses` → `[]`. It **forgot everything**: the queue
 was in memory. The align Jobs finish, but nobody creates the call Jobs, and the PVCs are orphaned.
 Clean up by label:
 ```sh

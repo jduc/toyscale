@@ -8,8 +8,9 @@ resources:
 - api-rbac.yaml
 - analyses-quota.yaml
 - api-deployment.yaml
+- api-ingress.yaml
 
 images:
 - name: toyscale-api
   newName: toyscale-api
-  newTag: 0.1.1
+  newTag: 0.1.2

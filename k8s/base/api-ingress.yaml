@@ -1,0 +1,19 @@
+# An Ingress = a routing rule for HTTP traffic coming into the cluster.
+# It does nothing alone: the ingress controller (Traefik) reads it and applies it.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api
+  namespace: toyscale
+spec:
+  ingressClassName: traefik # which controller should handle this rule
+  rules:
+    - http:
+        paths:
+          - path: /api       # every request whose path starts with /api ...
+            pathType: Prefix
+            backend:
+              service:
+                name: api    # ... goes to the Service "api" (same namespace) ...
+                port:
+                  number: 80 # ... on its port 80
