@@ -1,0 +1,17 @@
+# A ResourceQuota caps what can exist in a namespace, no matter who asks.
+# The API already limits itself to 5 analyses (MAX_RUNNING); this is the
+# cluster-side guardrail in case the app has a bug or someone misconfigures it.
+#
+# Each running analysis has exactly ONE live pod (align, then call),
+# so 5 pods = 5 analyses. Finished (Succeeded/Failed) pods don't count.
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: analyses-limits
+  namespace: analyses
+spec:
+  hard:
+    pods: "5"
+    requests.cpu: "1"        # 5 pods x 100m = 500m, leaves room for retries
+    requests.memory: 1Gi
+    persistentvolumeclaims: "10"

@@ -1,0 +1,48 @@
+# RBAC = Role-Based Access Control: WHO may do WHAT, WHERE.
+#
+#   WHO   ServiceAccount "api"       an identity for a program (a pod), not a person
+#   WHAT  Role "orchestrator"        a list of allowed verbs on resource types
+#   WHERE the Role's namespace       "analyses" only
+#   link  RoleBinding                gives the Role to the ServiceAccount
+#
+# Anything not listed here is denied (403 Forbidden).
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api
+  namespace: toyscale # the identity lives with the app...
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: orchestrator
+  namespace: analyses # ...but the permissions are only valid in "analyses"
+rules:
+  # Exactly the calls made in services/api/app/k8s.py, nothing more.
+  - apiGroups: ["batch"] # Jobs belong to the "batch" API group (apiVersion: batch/v1)
+    resources: ["jobs"]
+    verbs: ["create", "list", "delete"]
+  - apiGroups: [""] # "" = the core group (apiVersion: v1): pods, PVCs, services...
+    resources: ["persistentvolumeclaims"]
+    verbs: ["create", "delete"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list"]
+  - apiGroups: [""]
+    resources: ["pods/log"] # a sub-resource: reading logs is its own permission
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: api-orchestrator
+  namespace: analyses
+subjects:
+  - kind: ServiceAccount
+    name: api
+    namespace: toyscale
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: orchestrator

@@ -1,0 +1,13 @@
+# Two namespaces, two roles:
+#   toyscale  = the application itself (API now; UI later)
+#   analyses  = the work it creates (PVCs, Jobs, pods)
+# Separating them lets us give the work its own permissions and quota.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: toyscale
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: analyses

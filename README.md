@@ -21,9 +21,9 @@ Prometheus/Grafana watch the cluster.
 | 1b | Side step: Terraform fundamentals    | [docs/01b-terraform-basics.md](docs/01b-terraform-basics.md) · [playground](playground/terraform-basics/README.md) | ✅ |
 | 2  | First workload by hand               | [docs/02-first-workload.md](docs/02-first-workload.md) · [playground](playground/k8s-basics/README.md) | ✅ |
 | 3  | The worker container                 | [docs/03-worker-container.md](docs/03-worker-container.md) | ✅ |
-| 4  | 2-step pipeline: Jobs + PVC by hand  | [docs/04-pipeline-jobs-pvc.md](docs/04-pipeline-jobs-pvc.md) · [playground](playground/pipeline-by-hand/README.md) | ⏳ |
-| 5  | API + orchestrator                   |                                    |        |
-| 6  | API in-cluster, RBAC, quotas         |                                    |        |
+| 4  | 2-step pipeline: Jobs + PVC by hand  | [docs/04-pipeline-jobs-pvc.md](docs/04-pipeline-jobs-pvc.md) · [playground](playground/pipeline-by-hand/README.md) | ✅ |
+| 5  | API + orchestrator                   | [docs/05-api-orchestrator.md](docs/05-api-orchestrator.md) | ✅ |
+| 6  | API in-cluster, RBAC, quotas         | [docs/06-api-in-cluster-rbac.md](docs/06-api-in-cluster-rbac.md) | ✅ |
 | 7  | Platform: Traefik, Kafka via Terraform + Helm |                           |        |
 | 8  | Event streaming                      |                                    |        |
 | 9  | React dashboard                      |                                    |        |
