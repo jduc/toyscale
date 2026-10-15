@@ -13,6 +13,11 @@ RUN useradd --create-home --uid 1000 worker
 
 WORKDIR /app
 
+# Dependencies before the code: this layer is only rebuilt when requirements.txt
+# changes, not on every edit of worker.py.
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 # Copy our code last: it changes most often, so only this layer gets rebuilt.
 COPY worker.py .
 

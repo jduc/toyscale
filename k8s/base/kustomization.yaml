@@ -13,4 +13,4 @@ resources:
 images:
 - name: toyscale-api
   newName: toyscale-api
-  newTag: 0.1.2
+  newTag: 0.1.3

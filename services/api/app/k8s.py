@@ -49,6 +49,21 @@ def pvc_manifest(analysis_id: str) -> dict:
     }
 
 
+def worker_env(analysis_id: str, step: str) -> list[dict]:
+    """Environment variables for a worker pod: this is how the worker gets its settings."""
+    env = {
+        "STEP": step,
+        "ANALYSIS_ID": analysis_id,
+        "DATA_DIR": "/data",
+        "DURATION_MIN": cfg.WORKER_DURATION_MIN,
+        "DURATION_MAX": cfg.WORKER_DURATION_MAX,
+    }
+    if cfg.KAFKA_BOOTSTRAP:  # chapter 8: tell the worker where to send its events
+        env["KAFKA_BOOTSTRAP"] = cfg.KAFKA_BOOTSTRAP
+        env["KAFKA_TOPIC"] = cfg.KAFKA_TOPIC
+    return [{"name": k, "value": v} for k, v in env.items()]
+
+
 def job_manifest(analysis_id: str, step: str) -> dict:
     labels = {"app": APP_LABEL, "analysis": analysis_id, "step": step}
     return {
@@ -66,13 +81,7 @@ def job_manifest(analysis_id: str, step: str) -> dict:
                     "containers": [{
                         "name": "worker",
                         "image": cfg.WORKER_IMAGE,
-                        "env": [
-                            {"name": "STEP", "value": step},
-                            {"name": "ANALYSIS_ID", "value": analysis_id},
-                            {"name": "DATA_DIR", "value": "/data"},
-                            {"name": "DURATION_MIN", "value": cfg.WORKER_DURATION_MIN},
-                            {"name": "DURATION_MAX", "value": cfg.WORKER_DURATION_MAX},
-                        ],
+                        "env": worker_env(analysis_id, step),
                         "volumeMounts": [{"name": "data", "mountPath": "/data"}],
                         "resources": {
                             "requests": {"cpu": "100m", "memory": "64Mi"},

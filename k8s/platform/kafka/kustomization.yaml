@@ -1,0 +1,8 @@
+# Our Kafka cluster and topic, as Strimzi objects.
+# Needs the Strimzi operator first (make platform), then: kubectl apply -k k8s/platform/kafka
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - kafka-cluster.yaml
+  - kafka-topic.yaml

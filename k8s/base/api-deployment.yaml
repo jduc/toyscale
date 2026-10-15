@@ -30,7 +30,9 @@ spec:
             - name: NAMESPACE
               value: analyses
             - name: WORKER_IMAGE
-              value: toyscale-worker:0.1.0
+              value: toyscale-worker:0.2.0 # keep in sync with WORKER_TAG in the Makefile
+            - name: KAFKA_BOOTSTRAP # chapter 8: passed on to every worker pod
+              value: toyscale-kafka-bootstrap.kafka.svc:9092
             - name: MAX_RUNNING
               value: "5"
           resources:

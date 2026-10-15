@@ -1,0 +1,20 @@
+# A topic = a named channel of messages. Workers will WRITE their progress
+# events here (chapter 8), and the API will READ them.
+#
+# The Topic Operator (enabled in kafka-cluster.yaml) sees this object and
+# creates the topic inside Kafka. Delete the object, and the topic is deleted.
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: analysis-events
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: toyscale
+spec:
+  # A topic is split into PARTITIONS: independent ordered lists of messages.
+  # Messages with the same key (we'll use the analysis id) always go to the
+  # same partition, so each analysis' events stay in order. (Explained in chapter 8.)
+  partitions: 3
+  replicas: 1 # copies of each partition; can't exceed the number of nodes (1)
+  config:
+    retention.ms: 604800000 # keep messages 7 days (7 * 24 * 3600 * 1000 ms), then delete

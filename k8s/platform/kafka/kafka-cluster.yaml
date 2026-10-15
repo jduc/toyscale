@@ -1,0 +1,74 @@
+# Our REQUEST for a Kafka cluster. We don't create any pod ourselves:
+# the Strimzi operator (installed by terraform/02-platform/kafka.tf) watches these
+# objects and creates everything needed to make them real.
+#
+# Two objects describe one cluster:
+#   KafkaNodePool = WHICH machines (pods) Kafka runs on: how many, their role, disk, memory
+#   Kafka         = HOW the cluster behaves: version, how clients connect, settings
+
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: dual
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: toyscale # "I belong to the Kafka cluster named toyscale" (below)
+spec:
+  replicas: 1 # ONE Kafka node: fine for learning, not for production (no redundancy)
+
+  # A Kafka node can have two jobs:
+  #   broker     = stores messages and serves producers/consumers
+  #   controller = keeps the cluster's metadata (which topics exist, who leads what)
+  # Small clusters give both jobs to the same node ("dual role").
+  roles:
+    - controller
+    - broker
+
+  # Each node gets its own disk (a PVC, like chapter 4). Messages survive pod restarts.
+  storage:
+    type: persistent-claim
+    size: 1Gi
+    deleteClaim: true # delete the disk if the node pool is deleted (we're on a laptop)
+
+  # Kafka runs on the Java Virtual Machine. Cap its memory so it fits on your Mac.
+  jvmOptions:
+    "-Xms": 512m
+    "-Xmx": 512m
+  resources:
+    requests: { cpu: 200m, memory: 1Gi }
+    limits: { memory: 1Gi }
+---
+apiVersion: kafka.strimzi.io/v1
+kind: Kafka
+metadata:
+  name: toyscale
+  namespace: kafka
+spec:
+  kafka:
+    version: 4.3.1
+
+    # A listener = a way for clients to connect.
+    # "internal", port 9092, no TLS: reachable only from inside the cluster, at
+    #   toyscale-kafka-bootstrap.kafka.svc:9092   (a Service that Strimzi creates)
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+
+    # Kafka's own settings. By default Kafka keeps 3 copies of its internal
+    # bookkeeping topics; with only 1 node, that's impossible, so we say 1.
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+
+  # The "entity operator" is an extra helper pod. Its Topic Operator watches
+  # KafkaTopic objects (kafka-topic.yaml) and creates the real topics inside Kafka.
+  entityOperator:
+    topicOperator:
+      resources:
+        requests: { cpu: 50m, memory: 256Mi }
+        limits: { memory: 256Mi }
